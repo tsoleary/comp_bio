@@ -61,7 +61,7 @@ $$
 | :desert_island: | 0 | 0 |
 | :bamboo: | 179340 | 0 |
 
-![test](/Users/tsoleary/R/comp_bio/flow_chart.jpg)
+![test](https://tsoleary.github.io/comp_bio/flow_chart.jpg)
 
 ---
 
