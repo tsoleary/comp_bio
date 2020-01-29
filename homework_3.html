@@ -88,8 +88,9 @@ Record, Sydne, Bryn Mawr</code></pre>
 </div>
 <div id="solution-2" class="section level2">
 <h2>Solution 2</h2>
-<pre><code># find a word with a comma then a space then a second word then everything after the comma and the space.
-# capture the bits inside the ()
+<pre><code># capture the first name, then comma and space
+# capture the second name, then comma and space
+# then capture everything else for the university
 (\w+),\s(\w+),\s(.*)
 
 # replace it with 
@@ -111,10 +112,10 @@ Sydne Record (Bryn Mawr)</code></pre>
 </div>
 <div id="solution-3" class="section level2">
 <h2>Solution 3</h2>
-<pre><code># find a space followed by 4 digits
+<pre><code># find a space followed by 4 digits (to only get 2-4)
 \s(\d{4})
 
-# then replace it with a line break and that captured bit again
+# then replace the space with a line break and add captured bit back again
 \n\1
 
 
@@ -133,6 +134,7 @@ Sydne Record (Bryn Mawr)</code></pre>
 
 # replace wuth the bunch of anything then _ and the four digits then .mp3
 \2_\1\3
+
 
 Georgia Horseshoe_0001.mp3
 Billy In The Lowground_0002.mp3
@@ -166,7 +168,9 @@ L_neoniger,55</code></pre>
 </div>
 <div id="solution-6" class="section level2">
 <h2>Solution 6</h2>
-<pre><code># capture the first letter of the genus, and only the first four letters of species, and that final number
+<pre><code># capture the first letter of the genus
+# and only the first four letters of species
+# and that final number
 (\w)\w+,(\w{4})\w+,[0-9.]+,(\w+)
 
 # replace in this format with the underscore separating the species and the genus
@@ -183,10 +187,14 @@ L_neon,55</code></pre>
 </div>
 <div id="solution-7" class="section level2">
 <h2>Solution 7</h2>
-<pre><code># capture the first letter of the genus, and only the first four letters of species, and that final number
+<pre><code># capture the first three letters of the genus
+# and only the first three letters of species
+# and that final number
 (\w{3})\w+,(\w{3})\w+,([0-9.])+,(\w+)
 
-# replace in this format with the underscore separating the species and the genus
+# mash the genus and species letters together
+# add a space the whole number and a comma
+# then a space and the decimal number
 \1\2, \4, \3
 
 
