@@ -2,34 +2,139 @@
 title: "Homework 4"
 author: "Thomas O'Leary"
 output:
-  prettydoc::html_pretty:
-    theme: cayman
+rmarkdown::html_document:
+    theme: lumen
     highlight: github
 ---
 
-1. Suppose *x* = 1.1, *a* = 2.2, and *b* = 3.3. Assign each expression to the value of the variable *z*and print the value stored in *z*.
+```{r, include = FALSE}
+knitr::opts_chunk$set(eval = TRUE)
+```
 
-    a) $x^{a^b}$
-    b) $(x^{a})^b$
-    c) $3x^3 + 2x^2 + 1$
-
-2. Using the `rep` and `seq` functions, create the following vectors:
-
-    a) $(1,2,3,4,5,6,7,8,7,6,5,4,3,2,1)$
-    b) $(1,2,2,3,3,3,4,4,4,4,5,5,5,5,5)$
-    c) $(5,4,4,3,3,3,2,2,2,2,1,1,1,1,1)$
+# 1. Suppose *x* = 1.1, *a* = 2.2, and *b* = 3.3. Assign each expression to the value of the variable *z*and print the value stored in *z*.
     
-3. Create a vector of two random uniform numbers. In a spatial map, these can be interpreted as *x* and *y* coordinates that give the location of an individual (such as a marked forest tree in a plot that has been mapped). Using one of R's inverse trigonometry functions (`asin()`, `acos()`, or `atan()`), convert these numbers into polar coordinates (If you don't know what polar coordinates are, read about them on the web or in your calculus textbook).
+```{r}
+x <- 1.1
+a <- 2.2
+b <- 3.3
+```
 
-4. Suppose that `queue <- c("sheep", "fox", "owl", "ant")` and that `queue` represents the animals that are lined up to enter Noah's Ark, with the sheep at the front of the line. Using R expressions, update the queue successively as 
+##    a) $x^{a^b}$
+    
+```{r}
+z <- x^a^b 
+z
+```
 
-    a) the serpent arrives;
-    b) the sheep enters the ark;
-    c) the donkey arrives and talks his way to the front of the line;
-    d) the serpent gets impatient and leaves;
-    e) the owl gets bored and leaves;
-    f) the aphid arrives and the ant invites him to cut in line.
-    g) Finally, determine the position of the aphid in the line.
+##    b) $(x^{a})^b$
 
-5. Use R to create a vector of all of the integers from 1 to 100 that are not divisible by 2, 3, or 7.
+```{r}
+z <- (x^a)^b 
+z
+```
+##    c) $3x^3 + 2x^2 + 1$
 
+```{r}
+z <- 3*(x^3) + 2*(x^2) + 1
+z
+```    
+
+
+# 2. Using the `rep` and `seq` functions, create the following vectors:
+
+##    a) $(1,2,3,4,5,6,7,8,7,6,5,4,3,2,1)$
+    
+```{r}
+c(seq(from = 1, to = 8), seq(from = 7, to = 1))
+```
+    
+##    b) $(1,2,2,3,3,3,4,4,4,4,5,5,5,5,5)$
+    
+```{r}
+rep(seq(1:5), times = c(seq(1:5)))
+```    
+
+##    c) $(5,4,4,3,3,3,2,2,2,2,1,1,1,1,1)$
+    
+```{r}
+rep(seq(from = 5, to = 1), times = c(seq(1:5)))
+```       
+    
+    
+# 3. Create a vector of two random uniform numbers. In a spatial map, these can be interpreted as *x* and *y* coordinates that give the location of an individual (such as a marked forest tree in a plot that has been mapped). Using one of R's inverse trigonometry functions (`asin()`, `acos()`, or `atan()`), convert these numbers into polar coordinates (If you don't know what polar coordinates are, read about them on the web or in your calculus textbook).
+
+```{r}
+set.seed(1)
+v <- runif(2)
+# polar coordinates: (r, theta)
+# r = sqrt(x^2 + y^2)
+# theta = atan(y/x)
+
+r <- sqrt(v[1] + v[2]) 
+theta <- atan(v[2]/v[1])
+
+paste("r =", round(r, 4), "; theta =", round(theta, 4))
+```  
+
+# 4. Suppose that `queue <- c("sheep", "fox", "owl", "ant")` and that `queue` represents the animals that are lined up to enter Noah's Ark, with the sheep at the front of the line. Using R expressions, update the queue successively as 
+
+```{r}
+queue <- c("sheep", "fox", "owl", "ant")
+queue
+```
+
+##    a) the serpent arrives;
+```{r}
+queue <- c(queue, "serpent")
+queue
+```    
+    
+##    b) the sheep enters the ark;
+    
+```{r}
+queue <- queue[-1]
+queue
+```    
+##    c) the donkey arrives and talks his way to the front of the line;
+    
+```{r}
+queue <- c("donkey", queue)
+queue
+```    
+
+##    d) the serpent gets impatient and leaves;
+    
+```{r}
+queue <- queue[-which(queue == "serpent")]
+queue
+``` 
+
+##    e) the owl gets bored and leaves;
+    
+```{r}
+queue <- queue[-which(queue == "owl")]
+queue
+```     
+    
+##    f) the aphid arrives and the ant invites him to cut in line.
+    
+```{r}
+pos_ant <- which(queue == "ant")
+queue <- c(queue[1:(pos_ant - 1)], "aphid", queue[pos_ant:length(queue)])
+queue
+```    
+    
+##    g) Finally, determine the position of the aphid in the line.
+    
+```{r}
+pos_aphid <- which(queue == "aphid") 
+pos_aphid
+```    
+
+# 5. Use R to create a vector of all of the integers from 1 to 100 that are not divisible by 2, 3, or 7.
+
+
+```{r}
+v <- which(1:100 %% 2 != 0 & 1:100 %% 3 != 0 & 1:100 %% 7 != 0)
+v
+```   
