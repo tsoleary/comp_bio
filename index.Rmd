@@ -11,4 +11,8 @@ output:
 
 - [Homework 1](https://tsoleary.github.io/comp_bio/homework_1.html)
 
+- [Homework 2](https://tsoleary.github.io/comp_bio/)
+
 - [Homework 3](https://tsoleary.github.io/comp_bio/homework_3.html)
+
+- [Homework 4](https://tsoleary.github.io/comp_bio/homework_4.html)
