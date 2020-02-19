@@ -2,30 +2,26 @@
 title: "Homework 6"
 author: "Thomas O'Leary"
 output:
-rmarkdown::html_document:
+  rmarkdown::html_document:
     theme: lumen
-    highlight: github
+    number_sections: false
+    toc: true
+    toc_float: true
 ---
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
 ```
 
-### Simulating and Fitting Data Distributions
+# Simulating and Fitting Data Distributions
 
 This exercise teaches you how to compare a histogram of continuous (or integer) data to the probability density functions for different statistical distributions.
 
-1. Set up a new `.Rmd` file for this exercise. Copy and paste the code below into different code chunks, and then read the text and run the code chunks one at a time to see what they do. You probably won't understand everything in the code, but this is a good start for seeing some realistic uses of `ggplot`. We will cover most of these details in the next few weeks.
+1. $\checkmark$ Set up a new `.Rmd` file for this exercise. Copy and paste the code below into different code chunks, and then read the text and run the code chunks one at a time to see what they do. You probably won't understand everything in the code, but this is a good start for seeing some realistic uses of `ggplot`. We will cover most of these details in the next few weeks.
 
-2. Once the code is in and runs, try running this analysis on your own data (or data from your lab). Find a vector of data (of any size), set it up in a `.csv` file, and read the data into a data frame with this code chunk:
-
-```{r, eval=FALSE}
-z <- read.table("MyDataFile.csv",header=TRUE,sep=",", stringsAsFactors=FALSE)
-str(z)
-summary(z)
-```
-
-Lauren will be able to help you if you are having trouble reading in the data.
+2. Once the code is in and runs, try running this analysis on your own data (or data from your lab). Find a vector of data (of any size), set it up in a `.csv` file, and read the data into a data frame with this code chunk: Lauren will be able to help you if you are having trouble reading in the data.
 
 3. Once your data are in, go ahead and comment out the "fake data" that are simulated in the chunk below. At that point, if you compile the entire file, it should run all of the code on your own data. Be sure to add comments to the code and commentary to the `.Rmd` file so that you can go back to it later and understand and use the code in your work.
 
@@ -43,16 +39,23 @@ ___
 
 
 
-#### Open libraries
+## Open libraries
 
 ```{r}
 library(ggplot2) # for graphics
 library(MASS) # for maximum likelihood estimation
 ```
 
-#### Read in data vector
+## Read in data vector
 
 To illustrate, we will generate some fake data here:
+
+```{r, eval = FALSE}
+z <- read.table("MyDataFile.csv", header = TRUE, sep = ",",
+                stringsAsFactors = FALSE)
+str(z)
+summary(z)
+```
 
 ```{r}
 # quick and dirty, a truncated normal distribution to work on the solution set
@@ -67,7 +70,7 @@ summary(z$myVar)
 
 In the third step of this exercise, you wil substitute in your own data for this fake data set. But for now, use the code chunks below to see how you fit different statistical distributions to a vector of observations, and then estimate the maximum likelihood parameters for each distribution.
 
-#### Plot histogram of data
+## Plot histogram of data
 
 Plot a histogram of the data, using a modification of the code from lecture. Here we are switching from `qplot` to `ggplot` for more graphics options. We are also rescaling the y axis of the histogram from counts to density, so that the area under the histogram equals 1.0.
 
@@ -77,7 +80,7 @@ p1 <- ggplot(data=z, aes(x=myVar, y=..density..)) +
 print(p1)
 ```
 
-#### Add empirical density curve
+## Add empirical density curve
 
 Now modify the code to add in a kernel density plot of the data. This is an empirical curve that is fitted to the data. It does not assume any particular probability distribution, but it smooths out the shape of the histogram:
 
@@ -86,7 +89,7 @@ p1 <-  p1 +  geom_density(linetype="dotted",size=0.75)
 print(p1)
 ```
 
-#### Get maximum likelihood parameters for `normal`
+## Maximum likelihood params for `normal`
 
 Next, fit a normal distribution to your data and grab the maximum likelihood estimators of the two parameters of the normal, the mean and the variance:
 
@@ -97,7 +100,7 @@ str(normPars)
 normPars$estimate["mean"] # note structure of getting a named attribute
 
 ```
-#### Plot `normal` probability density
+## Plot `normal` probability density
 
 Now let's call the `dnorm` function inside ggplot's `stat_function` to generate the probability density for the normal distribution. Read about `stat_function` in the help system to see how you can use this to add a smooth function to any ggplot. Note that we first get the maximum likelihood parameters for a normal distribution fitted to thse data by calling `fitdistr`. Then we pass those parameters (`meanML` and `sdML` to `stat_function`:
 
@@ -114,7 +117,7 @@ xval <- seq(0,max(z$myVar),len=length(z$myVar))
 
 Notice that the best-fitting normal distribution (red curve) for these data actually has a biased mean. That is because the data set has no negative values, so the normal distribution (which is symmetric) is not working well.
 
-#### Plot `exponential` probability density
+## Plot `exponential` probability density
 
 Now let's use the same template and add in the curve for the exponential:
 
@@ -126,7 +129,7 @@ stat2 <- stat_function(aes(x = xval, y = ..y..), fun = dexp, colour="blue", n = 
  p1 + stat + stat2
 ```
 
-#### Plot `uniform` probability density
+## Plot `uniform` probability density
 
 For the uniform, we don't need to use `fitdistr` because the maximum likelihood estimators of the two parameters are just the minimum and the maximum of the data:
 
@@ -136,7 +139,7 @@ stat3 <- stat_function(aes(x = xval, y = ..y..), fun = dunif, colour="darkgreen"
 ```
 
 
-#### Plot `gamma` probability density
+## Plot `gamma` probability density
 
 
 ```{r}
@@ -149,7 +152,7 @@ stat4 <- stat_function(aes(x = xval, y = ..y..), fun = dgamma, colour="brown", n
 ```
 
 
-#### Plot `beta` probability density
+## Plot `beta` probability density
 This one has to be shown in its own plot because the raw data must be rescaled so they are between 0 and 1, and then they can be compared to the beta.
 
 ```{r}
