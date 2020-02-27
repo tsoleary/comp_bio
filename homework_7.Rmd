@@ -1,0 +1,174 @@
+---
+title: "Homework 7"
+author: "Thomas O'Leary"
+output:
+  rmarkdown::html_document:
+    theme: lumen
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+
+require(tidyverse) 
+require(kableExtra)
+```
+
+
+# Creating Fake Data Sets To Explore Hypotheses
+
+#### 1. $\checkmark$ Go back to your "thinking on paper" exercise, and decide on a pattern that you might expect in your experiment if a specific hypothesis were true.
+
+#### 2. $\checkmark$ To start simply, assume that the data in each of your treatment groups follow a normal distribution. Specify the sample sizes, means, and variances for each group that would be reasonable if your hypothesis were true.
+
+I am simulating the average CTmax for two different populations of _Drosophila melanogaster_. I just want to simulate something were the difference is fairly subtle ($1^{\circ}$C) and the variance is high compared to the difference in means (SD is 50% greater than the effect size). 5 to 100 seems like a reasonable sample size for the number of flies in each group.
+
+```{r}
+n <- 20
+
+trop_avg <- 41
+trop_sd <- 1.5
+
+vt_avg <- 40
+vt_sd <- 1.5
+```
+
+
+#### 3. $\checkmark$ Using the methods we have covered in class, write code to create a random data set that has these attributes. Organize these data into a data frame or tibble with the appropriate structure.
+
+```{r}
+df <- data.frame(grp = c(rep("deg", n), rep("ns", n)),
+                 lfc = c(rnorm(n, mean = trop_avg, sd = trop_sd), 
+                         rnorm(n, mean = vt_avg, sd = vt_sd)))
+```
+
+#### 4. $\checkmark$ Now write code to analyze the data (probably as an ANOVA or regression analysis, but possibly as a logistic regression or contingency table analysis. Write code to generate a useful graph of the data.
+
+```{r}
+aov <- aov(lfc ~ grp, data = df)
+
+summary(aov)
+```
+
+
+#### 5. $\checkmark$ Try running your analysis multiple times to get a feeling for how variable the results are with the same parameters, but different sets of random numbers.
+
+
+```{r}
+reps <- 5
+pvals <- vector(mode = "numeric", length = reps)
+
+for (i in 1:reps){
+  df <- data.frame(grp = c(rep("deg", n), rep("ns", n)),
+                 lfc = c(rnorm(n, mean = trop_avg, sd = trop_sd), 
+                         rnorm(n, mean = vt_avg, sd = vt_sd)))
+  aov <- aov(lfc ~ grp, data = df)
+
+  pvals[i] <- summary(aov)[[1]][["Pr(>F)"]]
+}
+
+pvals
+```
+
+
+#### 6. Now begin adjusting the means of the different groups. Given the sample sizes you have chosen, how small can the differences between the groups be (the "effect size") for you to still detect a significant pattern (p < 0.05)?
+
+```{r}
+
+trop_avg <- seq(from = 40, to = 45, by = 0.5)
+
+reps <- 5
+pval_df <- data.frame(
+  trop_avg = vector(mode = "numeric", length = length(trop_avg)),
+  pval_rep1 = vector(mode = "numeric", length = length(trop_avg)),
+  pval_rep2 = vector(mode = "numeric", length = length(trop_avg)),
+  pval_rep3 = vector(mode = "numeric", length = length(trop_avg)),
+  pval_rep4 = vector(mode = "numeric", length = length(trop_avg)),
+  pval_rep5 = vector(mode = "numeric", length = length(trop_avg))
+)
+
+
+for(k in 1:length(trop_avg)){
+  for (i in 1:reps){
+    df <- data.frame(grp = c(rep("deg", n), rep("ns", n)),
+                   lfc = c(rnorm(n, mean = trop_avg[k], sd = trop_sd), 
+                           rnorm(n, mean = vt_avg, sd = vt_sd)))
+    aov <- aov(lfc ~ grp, data = df)
+    pval_df[k, (i+1)] <- summary(aov)[[1]][["Pr(>F)"]][1]
+  }
+}
+
+pval_df$trop_avg <- trop_avg
+```
+
+```{r, echo = FALSE}
+signif(pval_df,3) %>%
+    mutate(pval_rep1 = cell_spec(pval_rep1, "html", 
+                                 color = ifelse(pval_rep1 < 0.05, "red", "grey50")),
+           pval_rep2 = cell_spec(pval_rep2, "html", 
+                                 color = ifelse(pval_rep2 < 0.05, "red", "grey50")),
+           pval_rep3 = cell_spec(pval_rep3, "html", 
+                                 color = ifelse(pval_rep3 < 0.05, "red", "grey50")),
+           pval_rep4 = cell_spec(pval_rep4, "html", 
+                                 color = ifelse(pval_rep4 < 0.05, "red", "grey50")),
+           pval_rep5 = cell_spec(pval_rep5, "html", 
+                                 color = ifelse(pval_rep5 < 0.05, "red", "grey50"))) %>%
+  kable(format = "html", escape = F) %>%
+  kable_styling("striped")
+```
+
+#### $\checkmark$ 7. Alternatively, for the effect sizes you originally hypothesized, what is the minimum sample size you would need in order to detect a statistically significant effect? Again, run the model a few times with the same parameter set to get a feeling for the effect of random variation in the data.
+
+
+```{r}
+
+n <- seq(from = 5, to = 100, by = 5)
+trop_avg <- 41
+
+reps <- 5
+pval_df <- data.frame(
+  n = vector(mode = "numeric", length = length(n)),
+  pval_rep1 = vector(mode = "numeric", length = length(n)),
+  pval_rep2 = vector(mode = "numeric", length = length(n)),
+  pval_rep3 = vector(mode = "numeric", length = length(n)),
+  pval_rep4 = vector(mode = "numeric", length = length(n)),
+  pval_rep5 = vector(mode = "numeric", length = length(n))
+)
+
+
+for(k in 1:length(n)){
+  for (i in 1:reps){
+    df <- data.frame(grp = c(rep("deg", n[k]), rep("ns", n[k])),
+                   lfc = c(rnorm(n[k], mean = trop_avg, sd = trop_sd), 
+                           rnorm(n[k], mean = vt_avg, sd = vt_sd)))
+    aov <- aov(lfc ~ grp, data = df)
+    pval_df[k, (i+1)] <- summary(aov)[[1]][["Pr(>F)"]][1]
+  }
+}
+
+pval_df$n <- n 
+pval_df$trop_avg <- trop_avg
+```
+
+```{r, echo = FALSE}
+signif(pval_df,3) %>%
+    mutate(pval_rep1 = cell_spec(pval_rep1, "html", 
+                                 color = ifelse(pval_rep1 < 0.05, "red", "grey50")),
+           pval_rep2 = cell_spec(pval_rep2, "html", 
+                                 color = ifelse(pval_rep2 < 0.05, "red", "grey50")),
+           pval_rep3 = cell_spec(pval_rep3, "html", 
+                                 color = ifelse(pval_rep3 < 0.05, "red", "grey50")),
+           pval_rep4 = cell_spec(pval_rep4, "html", 
+                                 color = ifelse(pval_rep4 < 0.05, "red", "grey50")),
+           pval_rep5 = cell_spec(pval_rep5, "html", 
+                                 color = ifelse(pval_rep5 < 0.05, "red", "grey50"))) %>%
+  kable(format = "html", escape = F) %>%
+  kable_styling("striped")
+```
+
+
+#### $\checkmark$ 8. Write up your results in a markdown file, organized with headers and different code chunks to show your analysis. Be explicit in your explanation and justification for sample sizes, means, and variances.
+
+
+
