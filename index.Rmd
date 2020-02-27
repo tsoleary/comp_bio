@@ -20,3 +20,5 @@ output:
 - [Homework 5](https://tsoleary.github.io/comp_bio/homework_5.html)
 
 - [Homework 6](https://tsoleary.github.io/comp_bio/homework_6.html)
+
+- [Homework 7](https://tsoleary.github.io/comp_bio/homework_7.html)
