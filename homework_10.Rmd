@@ -1,0 +1,209 @@
+---
+title: "Homework 10"
+author: "Thomas O'Leary"
+output:
+  rmarkdown::html_document:
+    theme: lumen
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+
+# For loops and randomization tests
+1. Using a for loop, write a function to calculate the number of zeroes in a numeric vector. Before entering the loop, set up a counter variable counter <- 0. Inside the loop, add 1 to counter each time you have a zero in the matrix. Finally, use return(counter) for the output.
+
+```{r}
+# Load libraries
+require(tidyverse)
+```
+
+
+```{r}
+# ------------------------------------------------------------------------------
+# Function: count_zeros
+# Description: counts the number of zeros in a vector
+# Inputs: numeric vector
+# Outputs: scalar number of zeros in the numeric vector
+
+count_zeros <- function(vec) {
+  
+  # Check inputs
+  if(!is.numeric(vec)){
+    stop("vec must be a numeric vector")
+  }
+  
+  # Initialize counter
+  counter <- 0
+  
+  # Count
+  for (i in 1:length(vec)) {
+    if (vec[i] == 0){
+      counter <- counter + 1
+    } else {
+      counter <- counter + 0
+    }
+  }
+  return(counter)
+} 
+# End function -----------------------------------------------------------------
+
+# Create a random numeric vector of size n with some zeros
+n <- 10000
+vec <- sample(0:1, n, replace = TRUE)
+
+count_zeros(vec)
+```
+
+
+
+2. Use subsetting instead of a loop to rewrite the function as a single line of code.
+
+
+```{r}
+# ------------------------------------------------------------------------------
+# Function: count_zeros_sub
+# Description: counts the number of zeros in a vector
+# Inputs: numeric vector
+# Outputs: scalar number of zeros in the numeric vector
+
+count_zeros_sub <- function(vec) {
+  
+  # Check inputs
+  if(!is.numeric(vec)){
+    stop("vec must be a numeric vector")
+  }
+  sum(vec == 0)
+} 
+# End function -----------------------------------------------------------------
+
+count_zeros_sub(vec)
+```
+
+3. Write a function that takes as input two integers representing the number of rows and columns in a matrix. The output is a matrix of these dimensions in which each element is the product of the row number x the column number.
+
+```{r}
+# ------------------------------------------------------------------------------
+# Function: make_mat
+# Description: creates a matrix where each element is a product of the row 
+# and column
+# Inputs: nrow, ncol; number of columns and rows
+# Outputs: matrix
+
+make_mat <- function(nrow = sample(1:10, 1), ncol = sample(1:10, 1)) {
+  matrix(nrow = nrow, ncol = ncol,
+         data = rep(1:nrow, times = ncol) * rep(1:ncol, each = nrow))
+} 
+# End function -----------------------------------------------------------------
+
+make_mat(nrow = 8, ncol = 10)
+```
+
+4. Use the code from the upcoming April 2nd lecture (Randomization Tests) to design and conduct a randomization test for some of your own data. You will need to modify the functions that read in the data, calculate the metric, and randomize the data. Once those are set up, the program should run correctly calling your new functions. Also, to make your analysis fully repeatable, make sure you set the random number seed at the beginning (use either set.seed() in base R, or char2seed in the TeachingDemos package
+
+```{r}
+seed <- 1
+set.seed(seed)
+
+# ------------------------------------------------------------------------------
+# Function: getData
+# Description: get or generate data
+# Inputs: input_description
+# Outputs: output_description
+
+getData <- function(n = 10, 
+                    g1_avg = sample(38:41), 
+                    g1_sd = rchisq(1, 1), 
+                    g2_avg = g1_avg * 1.1, 
+                    g2_sd = rchisq(1, 1), 
+                    g1 = "g1", g2 = "g2") {
+  
+  df <- data.frame(grp = c(rep(g1, n), rep(g2, n)),
+                   val = c(rnorm(n, mean = g1_avg, sd = g1_sd), 
+                           rnorm(n, mean = g2_avg, sd = g2_sd)))
+  
+  return(df)
+} 
+# End function -----------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+# Function: calculateStuff
+# Description: Performs an analysis of variance on your groups
+# Inputs: dat data.frame
+# Outputs: aov lm object
+
+calculateStuff <- function(dat) {
+  aov <- aov(val ~ grp, data = dat)
+  return(aov)
+} 
+# End function -----------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+# Function: summarizeOutput
+# Description: Get the p-value from an aov object
+# Inputs: aov object
+# Outputs: p-value
+
+summarizeOutput <- function(aov) {
+  pval <- summary(aov)[[1]][["Pr(>F)"]]
+  return(pval[1])
+} 
+# End function -----------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+# Function: shuffleData
+# Description: Shuffle the groups in a data frame
+# Inputs: data.frame  
+# Outputs: shuffled data.frame
+
+shuffleData <- function(dat, grp = "grp") {
+  dat[, grp] <- sample(dat[, grp])
+  return(dat)
+} 
+# End function -----------------------------------------------------------------
+
+
+
+# Program body -----
+# Create data with a real difference in means between groups
+df <- getData()
+df %>%
+  group_by(grp) %>%
+  summarize(mean = mean(val),
+            sd = sd(val))
+
+p_val <- summarizeOutput(calculateStuff(df))
+p_val
+
+# Shuffle the groups
+df_shuffled <- shuffleData(df)
+df_shuffled %>%
+  group_by(grp) %>%
+  summarize(mean = mean(val),
+            sd = sd(val))
+
+p_val_shuffled <- summarizeOutput(calculateStuff(df_shuffled))
+p_val_shuffled
+```
+
+
+5. For comparison, calculate in R the standard statistical analysis you would use with these data. How does the p-value compare for the standard test versus the p value you estimated from your randomization test? If the p values seem very different, run the program again with a different starting seed (and/or increase the number of replications in your randomization test). If there are persistent differences in the p value of the standard test versus your randomization, what do you think is responsible for this difference?
+
+```{r}
+# Randomization test -----------------------------------------------------------
+nSim <- 10000
+p_val_shuffled <- rep(NA, nSim)
+
+for (i in 1:nSim) {
+  p_val_shuffled[i] <- summarizeOutput(calculateStuff(shuffleData(df)))
+}
+
+p_val
+mean(p_val_shuffled)
+```
+
+The differences in the p-values, is that there is a true difference in the original data frame, created by how we generate the data in `getData()` but when the groups are shuffled that treatment effect is lost, so the ANOVA is unlikely to see a treatment effect.
