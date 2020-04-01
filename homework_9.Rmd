@@ -1,0 +1,111 @@
+---
+title: "Homework 9"
+author: "Thomas O'Leary"
+output:
+  rmarkdown::html_document:
+    theme: lumen
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+# Organizing Code With Structured Programming
+
+1. Use the code that you worked on in Homework #7 (creating fake data sets) , and re-organize it following the principles of structured programming. Do all the work in a single chunk in your R markdown file, just as if you were writing a single R script. Start with all of your annotated functions, preliminary calls, and global variables. The program body should be only a few lines of code that call the appropriate functions and run them in the correct order. Make sure that the output from one function serves as the input to the next. You can either daisy-chain the functions or write separate lines of code to hold elements in temporary variables and pass the along.
+
+```{r}
+# ------------------------------------------------------------------------------
+# This is a script to practice structured programming
+# March 25, 2020
+# TS O'Leary
+# ------------------------------------------------------------------------------
+
+# Load libraries
+require(tidyverse)
+
+# Source function
+source(here::here("functions.R"))
+
+# Global variables -----
+n <- 100
+g1 <- "Tropical"
+g1_avg <- 40.75
+g1_sd <- 2
+g2 <- "Temperate"
+g2_avg <- 40
+g2_sd <- 2
+
+# Program body ----
+df <- get_data(n = n,
+               g1_avg = g1_avg,
+               g1_sd = g1_sd,
+               g2_avg = g2_avg,
+               g2_sd = g2_sd,
+               g1 = g1,
+               g2 = g2)
+
+aov <- calculate_stuff(df)
+
+p.val <- summarize_output(aov)
+
+graph_results(df, x = "grp", y = "val", 
+              x_lab = "", y_lab = expression(CT[max]*~"(°C)"))
+```
+
+2. Once your code is up and working, modify your program do something else: record a new summary variable, code a new statistical analysis, or create a different set of random variables or output graph. Do not rewrite any of your existing functions. Instead, copy them, rename them, and then modify them to do new things. Once your new functions are written, add some more lines of program code, calling a mixture of your previous functions and your new functions to get te job done.
+
+```{r}
+# Program body repeating analysis for the new graph type ----
+df <- get_data(n = n,
+              g1_avg = g1_avg,
+              g1_sd = g1_sd,
+              g2_avg = g2_avg,
+              g2_sd = g2_sd,
+              g1 = g1,
+              g2 = g2)
+
+aov <- calculate_stuff(df)
+
+p.val <- summarize_output(aov)
+
+graphResults(df, x = "val", 
+             x_lab = expression(CT[max]*~"(°C)"), 
+             y_lab = "Density")
+```
+
+3. Optional. If time permits and you have the skills, try putting your program inside of a for loop and repeat the analysis with a different stochastic data set (each time you call a function that invokes the random number generator, it will create a new set of data for you to process). Can you create a data structure to store the summary statistics created in each pass through the loop? If not, your program will work, but it will only show the results from the final replicate (the previous results will be written over each time you traverse the loop).
+
+
+
+```{r}
+# Program body for the for loop ----
+
+numreps <- 20
+p.vals <- vector(mode = "numeric", length = numreps)
+
+for (i in 1:numreps) {
+  df <- get_data(n = n,
+                g1_avg = g1_avg,
+                g1_sd = g1_sd,
+                g2_avg = g2_avg,
+                g2_sd = g2_sd,
+                g1 = g1,
+                g2 = g2)
+  aov <- calculate_stuff(df)
+
+  p.vals[i] <- summarize_output(aov)
+}
+
+round(p.vals, 4)
+
+# Proportion of true positives
+p_true_pos <- sum(p.vals < 0.05)/length(p.vals)
+p_true_pos
+
+# Proportion of false negatives
+p_false_neg <- sum(p.vals > 0.05)/length(p.vals)
+p_false_neg
+```
