@@ -9,22 +9,26 @@ output:
 
 # Homework
 
-- [Homework 1](https://tsoleary.github.io/comp_bio/Homework/homework_1.html)
+- [Homework 1: Markdown on Typora](https://tsoleary.github.io/comp_bio/Homework/homework_1.html)
 
-- [Homework 2](https://tsoleary.github.io/comp_bio/)
+- [Homework 2: This website](https://tsoleary.github.io/comp_bio/)
 
-- [Homework 3](https://tsoleary.github.io/comp_bio/Homework/homework_3.html)
+- [Homework 3: Regular Expression Puzzles](https://tsoleary.github.io/comp_bio/Homework/homework_3.html)
 
-- [Homework 4](https://tsoleary.github.io/comp_bio/Homework/homework_4.html)
+- [Homework 4: Basic operations in R](https://tsoleary.github.io/comp_bio/Homework/homework_4.html)
 
-- [Homework 5](https://tsoleary.github.io/comp_bio/Homework/homework_5.html)
+- [Homework 5: Matrices, lists, and data frames](https://tsoleary.github.io/comp_bio/Homework/homework_5.html)
 
-- [Homework 6](https://tsoleary.github.io/comp_bio/Homework/homework_6.html)
+- [Homework 6: Fitting & simulating data distributions](https://tsoleary.github.io/comp_bio/Homework/homework_6.html)
 
-- [Homework 7](https://tsoleary.github.io/comp_bio/Homework/homework_7.html)
+- [Homework 7: Creating fake data sets to explore hypotheses](https://tsoleary.github.io/comp_bio/Homework/homework_7.html)
 
-- [Homework 8](https://tsoleary.github.io/comp_bio/Homework/homework_8.html)
+- [Homework 8: Data manipulations using the `dplyr` package](https://tsoleary.github.io/comp_bio/Homework/homework_8.html)
 
-- [Homework 9](https://tsoleary.github.io/comp_bio/Homework/homework_9.html)
+- [Homework 9: Organizing code with structured programming](https://tsoleary.github.io/comp_bio/Homework/homework_9.html)
 
-- [Homework 10](https://tsoleary.github.io/comp_bio/Homework/homework_10.html)
+- [Homework 10: For loops and randomization tests](https://tsoleary.github.io/comp_bio/Homework/homework_10.html)
+
+- [Homework 11: Batch processing](https://tsoleary.github.io/comp_bio/Homework/homework_11.html)
+
+- [Homework 12: Advanced `ggplot2`](https://tsoleary.github.io/comp_bio/Homework/homework_12.html)
