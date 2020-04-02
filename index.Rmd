@@ -9,22 +9,22 @@ output:
 
 # Homework
 
-- [Homework 1](https://tsoleary.github.io/comp_bio/homework_1.html)
+- [Homework 1](https://tsoleary.github.io/comp_bio/Homework/homework_1.html)
 
 - [Homework 2](https://tsoleary.github.io/comp_bio/)
 
-- [Homework 3](https://tsoleary.github.io/comp_bio/homework_3.html)
+- [Homework 3](https://tsoleary.github.io/comp_bio/Homework/homework_3.html)
 
-- [Homework 4](https://tsoleary.github.io/comp_bio/homework_4.html)
+- [Homework 4](https://tsoleary.github.io/comp_bio/Homework/homework_4.html)
 
-- [Homework 5](https://tsoleary.github.io/comp_bio/homework_5.html)
+- [Homework 5](https://tsoleary.github.io/comp_bio/Homework/homework_5.html)
 
-- [Homework 6](https://tsoleary.github.io/comp_bio/homework_6.html)
+- [Homework 6](https://tsoleary.github.io/comp_bio/Homework/homework_6.html)
 
-- [Homework 7](https://tsoleary.github.io/comp_bio/homework_7.html)
+- [Homework 7](https://tsoleary.github.io/comp_bio/Homework/homework_7.html)
 
-- [Homework 8](https://tsoleary.github.io/comp_bio/homework_8.html)
+- [Homework 8](https://tsoleary.github.io/comp_bio/Homework/homework_8.html)
 
-- [Homework 9](https://tsoleary.github.io/comp_bio/homework_9.html)
+- [Homework 9](https://tsoleary.github.io/comp_bio/Homework/homework_9.html)
 
-- [Homework 9](https://tsoleary.github.io/comp_bio/homework_10.html)
+- [Homework 10](https://tsoleary.github.io/comp_bio/Homework/homework_10.html)
