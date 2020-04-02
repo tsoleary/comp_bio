@@ -1,0 +1,34 @@
+---
+title: Lectures
+output:
+  html_document:
+    highlight: tango
+    theme: united
+  pdf_document: default
+---
+
+
+- [Introduction](https://tsoleary.github.io/comp_bio/Lecture/Lecture_01.html)
+- [GitHub](https://tsoleary.github.io/comp_bio/Lecture/Lecture_02.html)
+- [Regular Expressions](https://tsoleary.github.io/comp_bio/Lecture/Lecture_05.html)
+- [RStudio](https://tsoleary.github.io/comp_bio/Lecture/Lecture_06.html)
+- [Atomic Vectors and Data Types](https://tsoleary.github.io/comp_bio/Lecture/Lecture_07.html)
+- [Atomic Vectors](https://tsoleary.github.io/comp_bio/Lecture/Lecture_08.html)
+- [Matrices, Lists, & Data Frames](https://tsoleary.github.io/comp_bio/Lecture/Lecture_09.html)
+- [Data Curation](https://tsoleary.github.io/comp_bio/Lecture/Lecture_10.html)
+- [Probability Distributions](https://tsoleary.github.io/comp_bio/Lecture/Lecture_11.html)
+- [Experimental Designs](https://tsoleary.github.io/comp_bio/Lecture/Lecture_12.html)
+- [Functions](https://tsoleary.github.io/comp_bio/Lecture/Lecture_13.html)
+- [Structured Programming I](https://tsoleary.github.io/comp_bio/Lecture/Lecture_14.html)
+- [`dplyr` I](https://tsoleary.github.io/comp_bio/Lecture/Lecture_15.html)
+- [`dplyr` II](https://tsoleary.github.io/comp_bio/Lecture/Lecture_16.html)
+- [Snippets & Structured Programming II](https://tsoleary.github.io/comp_bio/Lecture/Lecture_17.html)
+- [Control Structures I](https://tsoleary.github.io/comp_bio/Lecture/Lecture_18.html)
+- [Control Structures II](https://tsoleary.github.io/comp_bio/Lecture/Lecture_19.html)
+- [Control Structures III](https://tsoleary.github.io/comp_bio/Lecture/Lecture_20.html)
+- [Randomization Tests](https://tsoleary.github.io/comp_bio/Lecture/Lecture_21.html)
+- [Batch Processing](https://tsoleary.github.io/comp_bio/Lecture/Lecture_22.html)
+- [`ggplot2` I](https://tsoleary.github.io/comp_bio/Lecture/Lecture_23.html)
+- [`ggplot2` II](https://tsoleary.github.io/comp_bio/Lecture/Lecture_24.html)
+- [`ggplot2` III](https://tsoleary.github.io/comp_bio/Lecture/Lecture_25.html)
+- [Functional Programming](https://tsoleary.github.io/comp_bio/Lecture/Lecture_26.html)
