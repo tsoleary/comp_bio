@@ -1,12 +1,36 @@
 ---
-title: Lectures
+title: Computational Biology Info
+author: TS O'Leary
 output:
-  html_document:
-    highlight: tango
-    theme: united
-  pdf_document: default
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
 ---
 
+# **Useful info**
+
+### Cheat Sheets
+- [R tips](https://tsoleary.github.io/comp_bio/CheatSheets/Rtips.pdf)
+- [Base R cheat sheet](https://tsoleary.github.io/comp_bio/CheatSheets/R_Cheat_Data.pdf)
+- [Base R short reference card](https://tsoleary.github.io/comp_bio/CheatSheets/Short-refcard.pdf)
+- [R markdown cheatsheet](https://tsoleary.github.io/comp_bio/CheatSheets/rmarkdown-2.0.pdf) and [reference](https://tsoleary.github.io/comp_bio/CheatSheets/rmarkdown-reference.pdf)
+- [RStudio cheat sheet](https://tsoleary.github.io/comp_bio/CheatSheets/rstudio-IDE-cheatsheet.pdf)
+- [LaTeX cheet sheet](https://tsoleary.github.io/comp_bio/CheatSheets/LaTeX-Cheat-Sheet.pdf)
+
+### Tidyverse
+- [`dplyr`](https://tsoleary.github.io/comp_bio/CheatSheets/dplyr.pdf)
+- [`ggplot2`](https://tsoleary.github.io/comp_bio/CheatSheets/ggplot2.pdf)
+- [`readr`](https://tsoleary.github.io/comp_bio/CheatSheets/readr.pdf)
+- [`stringr`](https://tsoleary.github.io/comp_bio/CheatSheets/stringr.pdf)
+- [`purrr`](https://tsoleary.github.io/comp_bio/CheatSheets/purrr.pdf)
+- [`forcats`](https://tsoleary.github.io/comp_bio/CheatSheets/forcats.pdf)
+
+### Visualization
+- [Base R color chart](https://tsoleary.github.io/comp_bio/CheatSheets/ColorChart.pdf)
+- [`RColorBrewer` palletes](https://tsoleary.github.io/comp_bio/CheatSheets/BrewerPalettes.pdf)
+- [Symbol and line types](https://tsoleary.github.io/comp_bio/CheatSheets/SymbolsAndLines.pdf)
+
+# **Lectures**
 
 - [Introduction](https://tsoleary.github.io/comp_bio/Lecture/Lecture_01.html)
 - [GitHub](https://tsoleary.github.io/comp_bio/Lecture/Lecture_02.html)
@@ -32,3 +56,18 @@ output:
 - [`ggplot2` II](https://tsoleary.github.io/comp_bio/Lecture/Lecture_24.html)
 - [`ggplot2` III](https://tsoleary.github.io/comp_bio/Lecture/Lecture_25.html)
 - [Functional Programming](https://tsoleary.github.io/comp_bio/Lecture/Lecture_26.html)
+
+# **Homework**
+
+- [Homework 1: Markdown on Typora](https://tsoleary.github.io/comp_bio/Homework/homework_1.html)
+- [Homework 2: This website](https://tsoleary.github.io/comp_bio/)
+- [Homework 3: Regular Expression Puzzles](https://tsoleary.github.io/comp_bio/Homework/homework_3.html)
+- [Homework 4: Basic operations in R](https://tsoleary.github.io/comp_bio/Homework/homework_4.html)
+- [Homework 5: Matrices, lists, and data frames](https://tsoleary.github.io/comp_bio/Homework/homework_5.html)
+- [Homework 6: Fitting & simulating data distributions](https://tsoleary.github.io/comp_bio/Homework/homework_6.html)
+- [Homework 7: Creating fake data sets to explore hypotheses](https://tsoleary.github.io/comp_bio/Homework/homework_7.html)
+- [Homework 8: Data manipulations using the `dplyr` package](https://tsoleary.github.io/comp_bio/Homework/homework_8.html)
+- [Homework 9: Organizing code with structured programming](https://tsoleary.github.io/comp_bio/Homework/homework_9.html)
+- [Homework 10: For loops and randomization tests](https://tsoleary.github.io/comp_bio/Homework/homework_10.html)
+- [Homework 11: Batch processing](https://tsoleary.github.io/comp_bio/Homework/homework_11.html)
+- [Homework 12: Advanced `ggplot2`](https://tsoleary.github.io/comp_bio/Homework/homework_12.html)
