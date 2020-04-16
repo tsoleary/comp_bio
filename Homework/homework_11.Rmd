@@ -1,0 +1,184 @@
+---
+title: "Homework 10"
+author: "Thomas O'Leary"
+output:
+  rmarkdown::html_document:
+    theme: lumen
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+## not done yet :)
+
+```{r}
+# ------------------------------------------------------------------------------
+# Batch processing spec data
+# April 16, 2020
+# TS O'Leary
+# ------------------------------------------------------------------------------
+
+# Create functions to 
+
+# ------------------------------------------------------------------------------
+# Function: read_tidy_spec_csv
+# Description: uses read_csv and tidys the data
+# Inputs: .csv file 
+# Outputs: data.frame
+
+require(tidyverse)
+
+read_tidy_spec_csv <- function(file) {
+  
+  read_csv(file) %>%
+    pivot_longer(-c("cycle", "time", "temp"), 
+                 names_to = "concEtOH", 
+                 values_to = "abs") %>%
+    mutate(concEtOH = as.numeric(str_replace_all(concEtOH, "_.", ""))) %>%
+    mutate(file = file,
+           temp_group = case_when(temp > 17.5 & temp < 19.5 ~ "18.5",
+                                  temp > 22.5 & temp < 24.5 ~ "23.5",
+                                  temp > 27.5 & temp < 29.5 ~ "28.5",
+                                  temp > 32.5 & temp < 34.5 ~ "33.5",
+                                  temp > 37.5 & temp < 39.5 ~ "38.5"))
+  
+} 
+# End function -----------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+# Function: read_bind_tidy_csv
+# Description: Read all the spec csvs in a directory
+# Inputs: dir is the directory with csv files to load and bind
+# Outputs: large binded tibble
+
+require(tidyverse)
+
+read_bind_tidy_csv <- function(dir) {
+  setwd(dir)
+  files <- list.files()
+  dfs <- vector(mode = "list", length = length(files))
+  
+    for (i in seq_along(files)){
+      dfs[[i]] <- read_tidy_spec_csv(files[i])
+    }
+  
+  bind_rows(dfs)
+} 
+# End function -----------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+# Function: calc_velocity
+# Description: Linear regression to determine velocity of the reaction in 
+#              absorbance over time at each concEtOH for each temp_group
+# Inputs: tibble from read_bind_tidy_csv() with concEtOH, temp_group, 
+#         abs, & time columns
+# Outputs: tibble with velocity estimates
+
+require(tidyverse)
+require(broom)
+
+calc_velocity <- function(data) {
+  data %>%
+    group_by(concEtOH, temp_group) %>%
+    nest() %>%
+    mutate(
+      fit = map(data, ~ lm(abs ~ time, data = .x)),
+      tidied = map(fit, tidy)
+    ) %>% 
+    unnest(tidied) %>%
+    filter(term == "time") %>%
+    select(temp_group, concEtOH, estimate) %>%
+    rename(velocity = estimate)
+} 
+# End function -----------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+# Function: calc_Km_Vm
+# Description: Calculate Vmax and Km for Michaelis–Menten curve
+# Inputs: tibble with velocity estimates for each concEtOH and temp_group
+# Outputs: tibble with estimates for Vmax and Km
+
+require(tidyverse)
+require(broom)
+
+calc_Km_Vm <- function(data) {
+  data %>%
+    filter(concEtOH != 0) %>%
+    group_by(temp_group) %>%
+    nest() %>%
+    mutate(
+      fit = map(data, ~ nls(formula = 
+                              velocity ~ SSmicmen(concEtOH, Vmax, Km), data = .), 
+                data = .x),
+      tidied = map(fit, tidy)
+    ) %>%
+    unnest(tidied)
+} 
+# End function -----------------------------------------------------------------
+
+
+# Load packages
+require(tidyverse)
+require(broom)
+
+
+# Program body
+
+data_f <- read_bind_tidy_csv(dir = here::here("Homework/spec_data/adh-f"))
+
+data_velo_f <- calc_velocity(data_f)
+
+data_Km_Vm_f <- calc_Km_Vm(data_velo_f)
+
+
+ggplot(data_velo_f, aes(x = concEtOH, y = velocity, color = temp_group)) +
+  geom_point() +
+  #scale_x_continuous(trans = "log10") +
+  theme_classic()
+  
+
+# 
+data_s <- read_bind_tidy_csv(dir = here::here("Homework/spec_data/adh-s")) %>%
+  filter(str_detect(file, "deg") | str_detect(file, "march_20"))
+
+data_velo_s <- calc_velocity(data_s)
+
+data_Km_Vm_s <- calc_Km_Vm(data_velo_s)
+
+
+ggplot(data_velo_s, aes(x = concEtOH, y = velocity, color = temp_group)) +
+  geom_point() +
+  #scale_x_continuous(trans = "log10") +
+  theme_classic()
+
+data_Km_Vm_f$enzyme <- "fast"
+data_Km_Vm_s$enzyme <- "slow"
+
+x <- bind_rows(data_Km_Vm_f, data_Km_Vm_s) %>%
+  select(enzyme, temp_group, term, estimate, std.error) %>%
+  pivot_wider(names_from = term, 
+              values_from = c(estimate, std.error))
+
+
+ggplot(x, aes(x = temp_group, y = estimate_Km, color = enzyme)) +
+  geom_point()
+
+
+ggplot(x, aes(x = temp_group, y = estimate_Km, fill = enzyme)) +
+  geom_col(position = "dodge", color = "grey50") +
+  geom_errorbar(aes(ymin = estimate_Km - std.error_Km, 
+                    ymax = estimate_Km + std.error_Km), 
+                width = .2,
+                position = position_dodge(.9)) +
+  labs(x = "Temperature (°C)",
+       y = expression("K"[m]*"  (mM EtOH)")) +
+  theme_classic()
+  
+
+```
