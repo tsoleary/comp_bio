@@ -19,6 +19,8 @@ knitr::opts_chunk$set(warning = FALSE)
 
 Repeat the exercise from the Batch Processing Lecture (7th April), but do it using real data sets rather than purely simulated. Check with folks in your lab to see if there are multiple data sets available for analysis. Stick to simple data analyses and graphics, but try to set it up as a batch process that will work on multiple files and save summary results to a common file.
 
+For this homework, I am taking spec data from **Gretchen Thompson**'s honors thesis measuring ADH activity in different populations of _D. melanogaster_, where she was trying to measure K<sub>m</sub>'s of these enzymes at different temperatures. This type of data and analysis is prime fodder for batch processing as the spec spits out many absorbance values for a bunch of samples at a few different time points. Then, velocity needs to be calculated based on a bunch of linear regressions. Then, a Michaelis–Menten curve needs be fitted on the velocities at each concentration, to find K<sub>m</sub> values. 
+
 
 ## Functions
 
