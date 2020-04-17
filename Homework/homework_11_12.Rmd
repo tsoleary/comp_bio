@@ -17,9 +17,20 @@ knitr::opts_chunk$set(warning = FALSE)
 
 # Homework 11: Batch processing
 
+## Assignment
+
 Repeat the exercise from the Batch Processing Lecture (7th April), but do it using real data sets rather than purely simulated. Check with folks in your lab to see if there are multiple data sets available for analysis. Stick to simple data analyses and graphics, but try to set it up as a batch process that will work on multiple files and save summary results to a common file.
 
-For this homework, I am taking spec data from **Gretchen Thompson**'s honors thesis measuring ADH activity in different populations of _D. melanogaster_, where she was trying to measure K<sub>m</sub>'s of these enzymes at different temperatures. This type of data and analysis is prime fodder for batch processing as the spec spits out many absorbance values for a bunch of samples at a few different time points. Then, velocity needs to be calculated based on a bunch of linear regressions. Then, a Michaelis–Menten curve needs be fitted on the velocities at each concentration, to find K<sub>m</sub> values. 
+## Data notes
+
+For this homework, I am taking spec data from **Gretchen Thompson**'s honors thesis measuring ADH activity in natural populations of _D. melanogaster_ and laboratory lines of _D. melanogaster_ that have known fast ands slow isoforms of the enzyme.
+
+- Ultimately Gretchen was trying to determine the K<sub>m</sub>'s of each of the enzymes at different temperatures. 
+- This type of data and analysis is prime fodder for batch processing as the spec spits out many absorbance values for a bunch of samples at several time points. 
+  - Here I am loading several `.csv` files from a directory that has files from different temperatures and different concentrations. 
+- Reaction velocity must be calculated based on linear regressions of the change in absorbance over time. 
+- A Michaelis–Menten curve needs be fitted on the reaction velocities at each concentration, to find V<sub>max</sub> and K<sub>m</sub> values. 
+- Hopefully, a version of this pipeline will be useful in the future.
 
 
 ## Functions
