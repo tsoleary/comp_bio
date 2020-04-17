@@ -144,8 +144,11 @@ require(RColorBrewer)
 
 # ADH-fast enzyme
 data_f <- read_bind_tidy_csv(dir = here::here("Homework/spec_data/adh-f"))
+head(data_f)
 data_velo_f <- calc_velocity(data_f)
+data_velo_f
 data_Km_Vm_f <- calc_Km_Vm(data_velo_f)
+data_Km_Vm_f
 
 # ADH-slow enzyme
 data_s <- read_bind_tidy_csv(dir = here::here("Homework/spec_data/adh-s")) %>%
@@ -265,6 +268,8 @@ df_km_plot <- bind_rows("fast" = data_Km_Vm_f,
   select(enzyme, temp_group, term, estimate, std.error) %>%
   pivot_wider(names_from = term, 
               values_from = c(estimate, std.error))
+
+df_km_plot
 
 
 # Plot all Km's on the same chart
