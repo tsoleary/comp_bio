@@ -1,6 +1,6 @@
 ---
-title: "Homeworks 11 & 12"
-subtitle: "Batch processing & ggplot"
+title: "Homeworks 11"
+subtitle: "Batch processing"
 author: "Thomas O'Leary"
 output:
   rmarkdown::html_document:
@@ -15,7 +15,7 @@ knitr::opts_chunk$set(message = FALSE)
 knitr::opts_chunk$set(warning = FALSE)
 ```
 
-# Homework 11: Batch processing
+# Batch processing
 
 ## Assignment
 
@@ -182,9 +182,7 @@ data_velo_chiapas <- calc_velocity(data_chiapas)
 data_Km_Vm_chiapas <- calc_Km_Vm(data_velo_chiapas)
 ```
 
-# Homework 12: Advanced ggplotting
-
-For this exerise, use your newly-developed ggplot chops to create some nice graphs from your own data (If you do not have a good data frame to use for graphics, use one of the many built-in data frames from R (other than mpg, which we are using in class)). Experiment with different themes, theme base sizes, aesthetics, mappings, and faceting. When you are finished, try exporting them to high quality pdfs, jpgs, eps files, or other formats that you would use for submission to a journal.
+# Plotting
 
 ## Functions
 
