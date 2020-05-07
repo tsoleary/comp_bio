@@ -103,7 +103,7 @@ ggsave("fig_1_final.tiff",
 
 ## Load and wrangle data
 
-```{r, fig.height = 6.5, fig.width = 5.25}
+```{r}
 x <- pheno %>%
   group_by(line_DGRP, type) %>%
   summarize(temp = mean(temp)) %>%
@@ -127,7 +127,7 @@ MAF_df <- bind_rows(
 
 ## Plot data
 
-```{r}
+```{r, fig.height = 6.5, fig.width = 5.25}
 p1 <- ggplot(MAF_df, 
   aes(x = NormEff, y = MAF, fill = GWAS, shape = GWAS)) +
   geom_point(size = 3) +
