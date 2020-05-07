@@ -1,0 +1,269 @@
+---
+title: "Homework 12"
+subtitle: "Advanced ggplot"
+author: "Thomas O'Leary"
+output:
+  rmarkdown::html_document:
+    theme: lumen
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include = FALSE}
+# don't show cose, warnings or messages
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+For this exerise, use your newly-developed ggplot chops to create some nice graphs from your own data (If you do not have a good data frame to use for graphics, use one of the many built-in data frames from R (other than mpg, which we are using in class)). Experiment with different themes, theme base sizes, aesthetics, mappings, and faceting. When you are finished, try exporting them to high quality pdfs, jpgs, eps files, or other formats that you would use for submission to a journal.
+
+# **GWAS Phenotypes**
+
+## Load and wrangle data
+
+```{r}
+require(tidyverse)
+
+
+# Load phenotype data
+pheno <- read_csv("pheno.csv")
+
+# Phenotype df wrangling
+pheno <- pheno %>%
+  pivot_longer(cols = starts_with("ct"), 
+               names_to = "type",
+               values_to = "temp") %>%
+  separate(type, into = c("type", "sex"), sep = "_")
+```
+
+## Create plots
+
+```{r, fig.height = 5, fig.width = 7}
+p1 <- ggplot(pheno %>%
+               filter(type == "ctmin") %>%
+               group_by(line_DGRP) %>%
+               summarize(temp = mean(temp)), 
+             aes(x = temp)) + 
+        geom_histogram(binwidth = 0.33, color = "grey", alpha = 0.75) + 
+        labs(x = expression(CT[min] * ~ "(°C)"),
+             y = "Frequency") +
+        xlim(c(0, 10)) +
+        ylim(c(0, 33)) + 
+        annotate("text", x = 7.5, y = 17.5, label = expression(H^2 *" = 0.25"),
+                 size = 4) +
+        theme_classic()
+
+p2 <- ggplot(pheno %>%
+               filter(type == "ctmax") %>%
+               group_by(line_DGRP) %>%
+               summarize(temp = mean(temp)), 
+             aes(x = temp)) + 
+        geom_histogram(binwidth = 0.33, color = "grey", alpha = 0.75) + 
+        labs(x = expression(CT[max] * ~ "(°C)"), 
+             y = "Frequency") +
+        xlim(c(35, 45)) +
+        ylim(c(0, 33)) +
+        annotate("text", x = 42.5, y = 17.5, label = expression(H^2 *" = 0.28"),
+                 size = 4) +
+        theme_classic()
+
+top_row <- cowplot::plot_grid(p1, p2, nrow = 1, labels = "AUTO")
+
+
+my.formula <- y ~ x
+df <- pheno %>%
+        pivot_wider(names_from = type, values_from = temp) %>%
+        group_by(line_DGRP) %>%
+        summarize(ctmin = mean(ctmin), ctmax = mean(ctmax))
+p3 <- ggplot(df, 
+             aes(x = ctmin, y = ctmax)) +
+        geom_point(fill = "grey50", shape = 21) +
+        geom_smooth(method = "lm", 
+                    linetype = "dashed", 
+                    se = FALSE, formula = my.formula, color = "grey50") +
+        annotate("text", x = 3, y = 40.5, 
+                 label = paste("r =", round(cor(df$ctmin, df$ctmax), 2)), 
+                 size = 4) +
+        labs(x = expression(CT[min] * ~ "(°C)"), 
+             y = expression(CT[max] * ~ "(°C)")) +
+        theme_classic() +
+        theme(plot.margin = unit(c(t = 0.25, r = 3.5, b = 0, l = 3.5), "cm"))
+
+cowplot::plot_grid(top_row, p3, nrow = 2, labels = c("", "C"))
+
+# Save a .tiff of the plot
+ggsave("fig_1_final.tiff", 
+       units = "in", 
+       width = 7, 
+       height = 5, 
+       dpi=300, 
+       compression = 'lzw')
+```
+
+# **GWAS MAF & Effect sizes**
+
+## Load and wrangle data
+
+```{r, fig.height = 6.5, fig.width = 5.25}
+x <- pheno %>%
+  group_by(line_DGRP, type) %>%
+  summarize(temp = mean(temp)) %>%
+  ungroup(line_DGRP) %>%
+  group_by(type) %>%
+  summarize(sd = sd(temp))
+
+gwas_hot_5 <- readRDS("gwas_hot_5.rds")
+gwas_cold_5 <- readRDS("gwas_cold_5.rds")
+
+MAF_df <- bind_rows(
+  gwas_hot_5 %>%
+    mutate(NormEff = AvgEff / x$sd[x$type == "ctmax"],
+           GWAS = "CTmax") %>%
+    select(NormEff, MAF, GWAS),
+  gwas_cold_5 %>%
+    mutate(NormEff = (AvgEff / x$sd[x$type == "ctmin"]) * -1,
+           GWAS = "CTmin") %>%
+    select(NormEff, MAF, GWAS))
+```
+
+## Plot data
+
+```{r}
+p1 <- ggplot(MAF_df, 
+  aes(x = NormEff, y = MAF, fill = GWAS, shape = GWAS)) +
+  geom_point(size = 3) +
+  geom_vline(xintercept = 0) +
+  labs(x = expression("Tolerance effect size  x  " * sigma[p]^-1), 
+       y = "Minor allele frequency") +
+  xlim(c(-1, 1)) +
+  ylim(c(0, 0.5)) +
+  theme_classic(base_size = 14) +
+  theme(legend.title = element_blank(),
+        legend.position = c(0.9, 0.9)) +
+  scale_shape_manual(values = c(24, 21),
+                     breaks = c("CTmax", "CTmin"),
+                     labels = c(expression(CT[max]), expression(CT[min]))) +
+  scale_fill_manual(values = c("indianred1", "lightskyblue"),
+                    breaks = c("CTmax", "CTmin"),
+                    labels = c(expression(CT[max]), expression(CT[min])))
+
+p2 <- ggplot(MAF_df,
+  aes(x = NormEff, fill = GWAS)) +
+  stat_bin(color = "grey50", position = "dodge", bins = 30) +
+  geom_vline(xintercept = 0) +
+  labs(x = expression("Tolerance effect size  x  " * sigma[p]^-1),
+       y = "Frequency") +
+  xlim(c(-1,1)) +
+  theme_classic(base_size = 14) +
+  scale_fill_manual(values = c("indianred1", "lightskyblue"),
+                    breaks = c("CTmax", "CTmin"),
+                    labels = c(expression(CT[max]), expression(CT[min]))) +
+  theme(legend.title = element_blank(),
+        legend.position = c(0.9, 0.9))
+
+cowplot::plot_grid(p2, p1, rel_heights = c(1.625, 2), labels = "AUTO", nrow = 2)
+
+ggsave("fig_3_final.tiff", 
+       units = "in", 
+       width = 5.25, 
+       height = 6.5, 
+       dpi=300, 
+       compression = 'lzw')
+```
+
+# **Protein abundance over time**
+
+## Plotting functions
+
+```{r, eval = FALSE}
+# Functions --------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+# Function: function_name
+# Description: plot protein abundance overtime with linear regression
+# Inputs: data.frame, figure title
+# Outputs: plot
+
+plot_pro <- function(dat, g_title, FUN = geom_point, x_pos = 9, y1_pos = 0.83,
+                     y2_pos = 0.30){
+  
+  df_l <- filter(dat, leg == "L")
+  df_r <- filter(dat, leg == "R")
+  
+  lm_l <- lm(abundance ~ week, df_l)
+  lm_r <- lm(abundance ~ week, df_r)
+  
+  eqn_l <- lm_eqn(lm_l)
+  eqn_r <- lm_eqn(lm_r)
+  
+  g <- ggplot(dat, aes(x = week, y = abundance)) +
+    FUN(mapping = aes(x = week, y = abundance, fill = leg), 
+        alpha = 0.5, size = 3, pch = 21,  color = "black", width = 0.05) +
+    labs(title = g_title, x = "Week", y = "Raw Abundance", fill = "Leg") +
+    expand_limits(x = 0, y = 0) +
+    theme_classic() +  
+    expand_limits(x = 0, y = 0) +
+    geom_smooth(mapping = aes(color = leg), method = 'lm', se = FALSE, 
+                size = 1.1, show.legend = FALSE, linetype = "dotted") +
+    annotate("text", x = x_pos, y = (y1_pos)*(max(dat$abundance)), 
+             label = eqn_l[1], parse = TRUE, color = "#F98B86") +
+    annotate("text", x = x_pos, y = (y1_pos - 0.05)*(max(dat$abundance)), 
+             label = eqn_l[2], parse = TRUE, color = "#F98B86") +
+    annotate("text", x = x_pos, y = (y1_pos - 0.11)*(max(dat$abundance)), 
+             label = eqn_l[3], parse = TRUE, color = "#F98B86") +
+    annotate("text", x = x_pos, y = (y2_pos)*(max(dat$abundance)), 
+             label = eqn_r[1], parse = TRUE, color = "#53D3D7") +
+    annotate("text", x = x_pos, y = (y2_pos - 0.05)*(max(dat$abundance)), 
+             label = eqn_r[2], parse = TRUE, color = "#53D3D7") +
+    annotate("text", x = x_pos, y = (y2_pos - 0.11)*(max(dat$abundance)), 
+             label = eqn_r[3], parse = TRUE, color = "#53D3D7") +
+    coord_cartesian(xlim = c(1, 8), clip = 'off') +
+    theme(plot.margin = unit(c(1, 5, 1, 1), "lines"))
+  return(g)
+}
+# End function -----------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+# Function: indiv_mpa_to_gene
+# Description: convert an individual accession to gene for each graph 
+# Inputs: Protein accession and a reference data frame
+# Outputs: gene symbols
+
+# convert an individual accession to gene for each graph 
+indiv_mpa_to_gene <- function (Acc_pro, gene_dat){
+  temp <- which(Acc_pro == gene_dat$Master.Protein.Accessions, TRUE)
+  gene <- gsub(Acc_pro, gene_dat$gene[temp], Acc_pro)
+  return(gene)
+}
+# End function -----------------------------------------------------------------
+
+```
+
+## Load data, plot, & save to `.pdf`
+
+```{r, eval = FALSE}
+
+# Load df
+df <- readRDS("kowalski_rat_pd_time.rds")
+
+# Plot all proteins 
+pros <- as.character(unique(df$Master.Protein.Accessions))
+
+plot_list <- list()
+
+for (pro in pros){
+  gene <- indiv_mpa_to_gene(pro, protein)
+  temp_df <- filter(df, Master.Protein.Accessions == pro)
+  g <- plot_pro(temp_df, g_title = gene, FUN = geom_jitter)
+  plot_list[[pro]] <- g
+}
+
+pdf("kowalski_pro_plots.pdf", width = 10.75, height = 6)
+
+for(pro in pros){
+  print(plot_list[[pro]])
+}
+
+dev.off() # pdf file should appear in working directory
+```
+
+## [PDF with all 600 plots for each protein](https://tsoleary.github.io/comp_bio/Homework/kowalski_pro_plots.pdf)
